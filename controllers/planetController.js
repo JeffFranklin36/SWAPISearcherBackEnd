@@ -1,12 +1,16 @@
 const Planet = require('../models/planetModel')
 const mongoose = require('mongoose')
+const axios = require('axios')
 
 // get all planets
 const getPlanets = async (req, res) => {
-    const planets = await Planet.find({}).sort({ createAt: -1 })
-
-    res.status(200).json(planets)
+    const myPlanets = await Planet.find({}).sort({ createAt: -1 });
+    const swapiPlanets = await axios.get('https://swapi.dev/api/planets/').then(response => response.data.results);
+    const planets = [...myPlanets, ...swapiPlanets];
+    res.status(200).json(planets);
 }
+
+
 
 // get a single planet
 const getPlanet = async (req, res) => {
